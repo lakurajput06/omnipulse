@@ -8,6 +8,7 @@ import AIBotView from "./components/AIBotView";
 import MenuView from "./components/MenuView";
 import AdminLogin from "./components/AdminLogin";
 import UserLogin from "./components/UserLogin";
+import UserPanel from "./components/UserPanel";
 import { Home, TrendingUp, Bot, Settings, X, Shield, Users, Zap, LogOut, BarChart3, Lock, Sliders, Cpu, MessageSquare, Ticket, TrendingDown, Brain } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -219,12 +220,20 @@ export default function App() {
                 <div className="max-w-6xl mx-auto px-4 py-12">
                   {/* Header */}
                   <div className="mb-12">
-                    <div className="flex items-center gap-4 mb-4">
-                      <Users className="w-12 h-12 text-green-600" />
-                      <div>
-                        <h1 className="text-4xl font-bold text-gray-900">User Dashboard</h1>
-                        <p className="text-gray-600">Welcome back, {userAuth.email}</p>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <Users className="w-12 h-12 text-green-600" />
+                        <div>
+                          <h1 className="text-4xl font-bold text-gray-900">User Dashboard</h1>
+                          <p className="text-gray-600">Welcome back, {userAuth.email}</p>
+                        </div>
                       </div>
+                      <button
+                        onClick={() => setActiveTab(Tab.UserPanel)}
+                        className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold whitespace-nowrap"
+                      >
+                        Go to Full Panel →
+                      </button>
                     </div>
                   </div>
 
@@ -315,6 +324,12 @@ export default function App() {
                   </div>
                 </div>
               </div>
+            )}
+            {activeTab === Tab.UserPanel && userAuth && (
+              <UserPanel
+                email={userAuth.email}
+                onLogout={handleLogout}
+              />
             )}
           </motion.div>
         </AnimatePresence>

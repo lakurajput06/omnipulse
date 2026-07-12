@@ -7,6 +7,7 @@ export enum Tab {
   UserLogin = "user-login",
   AdminDashboard = "admin-dashboard",
   UserDashboard = "user-dashboard",
+  UserPanel = "user-panel",
 }
 
 export interface ChatMessage {
