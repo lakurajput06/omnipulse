@@ -8,7 +8,7 @@ import AIBotView from "./components/AIBotView";
 import MenuView from "./components/MenuView";
 import AdminLogin from "./components/AdminLogin";
 import UserLogin from "./components/UserLogin";
-import { Home, TrendingUp, Bot, Settings, X, Shield, Users, Zap, LogOut } from "lucide-react";
+import { Home, TrendingUp, Bot, Settings, X, Shield, Users, Zap, LogOut, BarChart3, Lock, Sliders, Cpu, MessageSquare, Ticket, TrendingDown, Brain } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function App() {
@@ -115,34 +115,97 @@ export default function App() {
             {activeTab === Tab.AdminDashboard && adminAuth && (
               <div className="w-full">
                 <div className="max-w-6xl mx-auto px-4 py-12">
-                  <div className="bg-blue-50 rounded-2xl p-8 md:p-12 text-center">
-                    <Shield className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-                    <p className="text-gray-600 mb-6 text-lg">Welcome, {adminAuth.email}</p>
-                    <div className="bg-white rounded-lg p-6 mb-8 text-left max-w-2xl mx-auto">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Dashboard Features</h2>
-                      <ul className="space-y-3 text-gray-700">
-                        <li className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full" />
-                          <span>Manage users and permissions</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full" />
-                          <span>View system analytics</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full" />
-                          <span>Configure campaigns and integrations</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full" />
-                          <span>Monitor AI engine performance</span>
-                        </li>
-                      </ul>
+                  {/* Header */}
+                  <div className="mb-12">
+                    <div className="flex items-center gap-4 mb-4">
+                      <Shield className="w-12 h-12 text-blue-600" />
+                      <div>
+                        <h1 className="text-4xl font-bold text-gray-900">Admin Dashboard</h1>
+                        <p className="text-gray-600">Welcome back, {adminAuth.email}</p>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Feature Cards Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    {/* Manage Users & Permissions */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="bg-white rounded-xl p-8 border-2 border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all cursor-pointer group"
+                    >
+                      <div className="bg-blue-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+                        <Users className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Manage Users & Permissions</h3>
+                      <p className="text-gray-600 mb-4">Control user access levels, roles, and security permissions across the platform</p>
+                      <button className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                        <span>Open Manager</span>
+                        <span>→</span>
+                      </button>
+                    </motion.div>
+
+                    {/* System Analytics */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="bg-white rounded-xl p-8 border-2 border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all cursor-pointer group"
+                    >
+                      <div className="bg-blue-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+                        <BarChart3 className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">View System Analytics</h3>
+                      <p className="text-gray-600 mb-4">Monitor real-time system metrics, user engagement, and platform performance data</p>
+                      <button className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                        <span>View Analytics</span>
+                        <span>→</span>
+                      </button>
+                    </motion.div>
+
+                    {/* Configure Campaigns & Integrations */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="bg-white rounded-xl p-8 border-2 border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all cursor-pointer group"
+                    >
+                      <div className="bg-blue-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+                        <Sliders className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Configure Campaigns & Integrations</h3>
+                      <p className="text-gray-600 mb-4">Set up marketing campaigns and manage third-party API integrations seamlessly</p>
+                      <button className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                        <span>Configure</span>
+                        <span>→</span>
+                      </button>
+                    </motion.div>
+
+                    {/* Monitor AI Engine Performance */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="bg-white rounded-xl p-8 border-2 border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all cursor-pointer group"
+                    >
+                      <div className="bg-blue-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+                        <Cpu className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Monitor AI Engine Performance</h3>
+                      <p className="text-gray-600 mb-4">Track AI model accuracy, response times, and system health metrics in real-time</p>
+                      <button className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                        <span>Monitor</span>
+                        <span>→</span>
+                      </button>
+                    </motion.div>
+                  </div>
+
+                  {/* Logout Button */}
+                  <div className="flex justify-center">
                     <button
                       onClick={handleLogout}
-                      className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all font-semibold"
+                      className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-all font-semibold shadow-md hover:shadow-lg"
                     >
                       <LogOut className="w-5 h-5" />
                       Logout
@@ -154,34 +217,97 @@ export default function App() {
             {activeTab === Tab.UserDashboard && userAuth && (
               <div className="w-full">
                 <div className="max-w-6xl mx-auto px-4 py-12">
-                  <div className="bg-green-50 rounded-2xl p-8 md:p-12 text-center">
-                    <Users className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">User Dashboard</h1>
-                    <p className="text-gray-600 mb-6 text-lg">Welcome, {userAuth.email}</p>
-                    <div className="bg-white rounded-lg p-6 mb-8 text-left max-w-2xl mx-auto">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Features</h2>
-                      <ul className="space-y-3 text-gray-700">
-                        <li className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-green-600 rounded-full" />
-                          <span>Send WhatsApp marketing campaigns</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-green-600 rounded-full" />
-                          <span>Create and manage support tickets</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-green-600 rounded-full" />
-                          <span>View ROI analytics and reports</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-green-600 rounded-full" />
-                          <span>Chat with AI Support Bot</span>
-                        </li>
-                      </ul>
+                  {/* Header */}
+                  <div className="mb-12">
+                    <div className="flex items-center gap-4 mb-4">
+                      <Users className="w-12 h-12 text-green-600" />
+                      <div>
+                        <h1 className="text-4xl font-bold text-gray-900">User Dashboard</h1>
+                        <p className="text-gray-600">Welcome back, {userAuth.email}</p>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Feature Cards Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    {/* WhatsApp Campaigns */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="bg-white rounded-xl p-8 border-2 border-green-100 hover:border-green-300 hover:shadow-lg transition-all cursor-pointer group"
+                    >
+                      <div className="bg-green-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+                        <MessageSquare className="w-8 h-8 text-green-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Send WhatsApp Campaigns</h3>
+                      <p className="text-gray-600 mb-4">Create and launch targeted WhatsApp marketing campaigns to reach your customers</p>
+                      <button className="inline-flex items-center gap-2 text-green-600 font-semibold hover:text-green-700 transition-colors">
+                        <span>Create Campaign</span>
+                        <span>→</span>
+                      </button>
+                    </motion.div>
+
+                    {/* Support Tickets */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="bg-white rounded-xl p-8 border-2 border-green-100 hover:border-green-300 hover:shadow-lg transition-all cursor-pointer group"
+                    >
+                      <div className="bg-green-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+                        <Ticket className="w-8 h-8 text-green-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Manage Support Tickets</h3>
+                      <p className="text-gray-600 mb-4">Create, track, and resolve customer support tickets efficiently</p>
+                      <button className="inline-flex items-center gap-2 text-green-600 font-semibold hover:text-green-700 transition-colors">
+                        <span>View Tickets</span>
+                        <span>→</span>
+                      </button>
+                    </motion.div>
+
+                    {/* ROI Analytics */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="bg-white rounded-xl p-8 border-2 border-green-100 hover:border-green-300 hover:shadow-lg transition-all cursor-pointer group"
+                    >
+                      <div className="bg-green-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+                        <TrendingDown className="w-8 h-8 text-green-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">View ROI Analytics</h3>
+                      <p className="text-gray-600 mb-4">Track return on investment and analyze campaign performance metrics</p>
+                      <button className="inline-flex items-center gap-2 text-green-600 font-semibold hover:text-green-700 transition-colors">
+                        <span>View Reports</span>
+                        <span>→</span>
+                      </button>
+                    </motion.div>
+
+                    {/* AI Support Bot */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="bg-white rounded-xl p-8 border-2 border-green-100 hover:border-green-300 hover:shadow-lg transition-all cursor-pointer group"
+                    >
+                      <div className="bg-green-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+                        <Brain className="w-8 h-8 text-green-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">AI Support Bot</h3>
+                      <p className="text-gray-600 mb-4">Chat with our intelligent AI assistant for instant help and recommendations</p>
+                      <button className="inline-flex items-center gap-2 text-green-600 font-semibold hover:text-green-700 transition-colors">
+                        <span>Start Chat</span>
+                        <span>→</span>
+                      </button>
+                    </motion.div>
+                  </div>
+
+                  {/* Logout Button */}
+                  <div className="flex justify-center">
                     <button
                       onClick={handleLogout}
-                      className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all font-semibold"
+                      className="inline-flex items-center gap-2 bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-all font-semibold shadow-md hover:shadow-lg"
                     >
                       <LogOut className="w-5 h-5" />
                       Logout
