@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   User,
   Mail,
@@ -24,6 +24,7 @@ import {
   Clock,
   BarChart3,
   Users as UsersIcon,
+  Loader,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -57,76 +58,20 @@ interface UserStats {
   totalCampaigns: number;
   totalMessages: number;
   totalRevenue: number;
-  engagementRate: number;
+  engagementRate: number | string;
   openTickets: number;
   avgResponseTime: string;
 }
 
-const mockCampaigns: Campaign[] = [
-  {
-    id: "1",
-    name: "Summer Sale 2026",
-    status: "active",
-    startDate: "2026-06-15",
-    messagesSent: 5420,
-    engagement: 34.2,
-    revenue: 12450,
-  },
-  {
-    id: "2",
-    name: "Product Launch",
-    status: "completed",
-    startDate: "2026-05-10",
-    messagesSent: 8932,
-    engagement: 42.5,
-    revenue: 28900,
-  },
-  {
-    id: "3",
-    name: "Flash Deal",
-    status: "paused",
-    startDate: "2026-07-01",
-    messagesSent: 3210,
-    engagement: 28.8,
-    revenue: 6750,
-  },
-];
-
-const mockTickets: Ticket[] = [
-  {
-    id: "TK001",
-    title: "Integration Issue with Shopify",
-    status: "open",
-    priority: "high",
-    createdDate: "2026-07-11",
-    response: "Still waiting for support team",
-  },
-  {
-    id: "TK002",
-    title: "API Rate Limit Questions",
-    status: "pending",
-    priority: "medium",
-    createdDate: "2026-07-09",
-    response: "Response pending from technical team",
-  },
-  {
-    id: "TK003",
-    title: "Campaign Analytics Report",
-    status: "closed",
-    priority: "low",
-    createdDate: "2026-07-05",
-    response: "Resolved - Report sent via email",
-  },
-];
-
-const mockStats: UserStats = {
-  totalCampaigns: 12,
-  totalMessages: 45320,
-  totalRevenue: 94500,
-  engagementRate: 38.4,
-  openTickets: 2,
-  avgResponseTime: "2-3 hours",
-};
+interface ProfileData {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  location: string;
+  timezone: string;
+  website: string;
+}
 
 export default function UserPanel({ email, onLogout }: UserPanelProps) {
   const [activeTab, setActiveTab] = useState<PanelTab>("overview");
@@ -135,8 +80,11 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
   const [showNewTicketModal, setShowNewTicketModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [notifications, setNotifications] = useState(true);
-
-  const [profileData, setProfileData] = useState({
+  const [loading, setLoading] = useState(true);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [stats, setStats] = useState<UserStats | null>(null);
+  const [profileData, setProfileData] = useState<ProfileData>({
     name: "John Doe",
     email: email,
     phone: "+1 (555) 123-4567",
@@ -145,6 +93,66 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
     timezone: "PST",
     website: "www.techstart.com",
   });
+
+  // Fetch all data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [profileRes, campaignsRes, ticketsRes, analyticsRes] = await Promise.all([
+          fetch(`/api/user/profile/${email}`),
+          fetch(`/api/user/campaigns/${email}`),
+          fetch(`/api/user/tickets/${email}`),
+          fetch(`/api/user/analytics/${email}`),
+        ]);
+
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          setProfileData(profile);
+        }
+
+        if (campaignsRes.ok) {
+          const campaignsData = await campaignsRes.json();
+          setCampaigns(campaignsData);
+        }
+
+        if (ticketsRes.ok) {
+          const ticketsData = await ticketsRes.json();
+          setTickets(ticketsData);
+        }
+
+        if (analyticsRes.ok) {
+          const analyticsData = await analyticsRes.json();
+          setStats(analyticsData);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [email]);
+
+  const handleSaveProfile = async () => {
+    try {
+      const res = await fetch(`/api/user/profile/${email}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profileData),
+      });
+
+      if (res.ok) {
+        setEditProfile(false);
+        alert("Profile updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      alert("Failed to save profile");
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -174,6 +182,17 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
         return "bg-gray-100 text-gray-800";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20 pb-12 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="w-12 h-12 text-green-600 animate-spin" />
+          <p className="text-gray-600 font-semibold">Loading your panel...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20 pb-12">
@@ -226,37 +245,39 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
               className="space-y-8"
             >
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-gray-600 text-sm font-medium">Total Campaigns</p>
-                      <p className="text-4xl font-bold text-gray-900 mt-2">{mockStats.totalCampaigns}</p>
+              {stats && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-gray-600 text-sm font-medium">Total Campaigns</p>
+                        <p className="text-4xl font-bold text-gray-900 mt-2">{stats.totalCampaigns}</p>
+                      </div>
+                      <MessageSquare className="w-12 h-12 text-green-100" />
                     </div>
-                    <MessageSquare className="w-12 h-12 text-green-100" />
                   </div>
-                </div>
 
-                <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
-                      <p className="text-4xl font-bold text-gray-900 mt-2">${mockStats.totalRevenue.toLocaleString()}</p>
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
+                        <p className="text-4xl font-bold text-gray-900 mt-2">${stats.totalRevenue.toLocaleString()}</p>
+                      </div>
+                      <TrendingDown className="w-12 h-12 text-blue-100" />
                     </div>
-                    <TrendingDown className="w-12 h-12 text-blue-100" />
                   </div>
-                </div>
 
-                <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-gray-600 text-sm font-medium">Avg Engagement</p>
-                      <p className="text-4xl font-bold text-gray-900 mt-2">{mockStats.engagementRate}%</p>
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-gray-600 text-sm font-medium">Avg Engagement</p>
+                        <p className="text-4xl font-bold text-gray-900 mt-2">{stats.engagementRate}%</p>
+                      </div>
+                      <UsersIcon className="w-12 h-12 text-purple-100" />
                     </div>
-                    <UsersIcon className="w-12 h-12 text-purple-100" />
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Recent Campaigns */}
               <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
@@ -272,7 +293,7 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
                 </div>
 
                 <div className="space-y-4">
-                  {mockCampaigns.slice(0, 3).map((campaign) => (
+                  {campaigns.slice(0, 3).map((campaign) => (
                     <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                       <div>
                         <h3 className="font-semibold text-gray-900">{campaign.name}</h3>
@@ -324,7 +345,7 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {mockCampaigns.map((campaign) => (
+                {campaigns.map((campaign) => (
                   <motion.div
                     key={campaign.id}
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -390,7 +411,7 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
               </div>
 
               <div className="space-y-4">
-                {mockTickets.map((ticket) => (
+                {tickets.map((ticket) => (
                   <motion.div
                     key={ticket.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -422,7 +443,7 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
           )}
 
           {/* Analytics Tab */}
-          {activeTab === "analytics" && (
+          {activeTab === "analytics" && stats && (
             <motion.div
               key="analytics"
               initial={{ opacity: 0, y: 20 }}
@@ -433,13 +454,13 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Messages Sent</h3>
-                  <p className="text-5xl font-bold text-green-600 mb-2">{mockStats.totalMessages.toLocaleString()}</p>
+                  <p className="text-5xl font-bold text-green-600 mb-2">{stats.totalMessages.toLocaleString()}</p>
                   <p className="text-sm text-gray-600">Across all campaigns</p>
                 </div>
 
                 <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Engagement Rate</h3>
-                  <p className="text-5xl font-bold text-blue-600 mb-2">{mockStats.engagementRate}%</p>
+                  <p className="text-5xl font-bold text-blue-600 mb-2">{stats.engagementRate}%</p>
                   <p className="text-sm text-gray-600">Average across campaigns</p>
                 </div>
               </div>
@@ -447,7 +468,7 @@ export default function UserPanel({ email, onLogout }: UserPanelProps) {
               <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Campaign Performance</h3>
                 <div className="space-y-4">
-                  {mockCampaigns.map((campaign) => (
+                  {campaigns.map((campaign) => (
                     <div key={campaign.id}>
                       <div className="flex justify-between items-center mb-2">
                         <span className="font-semibold text-gray-900">{campaign.name}</span>

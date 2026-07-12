@@ -127,6 +127,178 @@ Ticket text: "${ticketText}"`;
   }
 });
 
+// User Panel API Endpoints
+// Mock data storage (in production, use a database)
+const userProfiles: Record<string, any> = {
+  "user@omnipulse.com": {
+    name: "John Doe",
+    email: "user@omnipulse.com",
+    phone: "+1 (555) 123-4567",
+    company: "TechStart Inc",
+    location: "San Francisco, CA",
+    timezone: "PST",
+    website: "www.techstart.com",
+  },
+};
+
+const userCampaigns: Record<string, any[]> = {
+  "user@omnipulse.com": [
+    {
+      id: "1",
+      name: "Summer Sale 2026",
+      status: "active",
+      startDate: "2026-06-15",
+      messagesSent: 5420,
+      engagement: 34.2,
+      revenue: 12450,
+    },
+    {
+      id: "2",
+      name: "Product Launch",
+      status: "completed",
+      startDate: "2026-05-10",
+      messagesSent: 8932,
+      engagement: 42.5,
+      revenue: 28900,
+    },
+    {
+      id: "3",
+      name: "Flash Deal",
+      status: "paused",
+      startDate: "2026-07-01",
+      messagesSent: 3210,
+      engagement: 28.8,
+      revenue: 6750,
+    },
+  ],
+};
+
+const userTickets: Record<string, any[]> = {
+  "user@omnipulse.com": [
+    {
+      id: "TK001",
+      title: "Integration Issue with Shopify",
+      status: "open",
+      priority: "high",
+      createdDate: "2026-07-11",
+      response: "Still waiting for support team",
+    },
+    {
+      id: "TK002",
+      title: "API Rate Limit Questions",
+      status: "pending",
+      priority: "medium",
+      createdDate: "2026-07-09",
+      response: "Response pending from technical team",
+    },
+    {
+      id: "TK003",
+      title: "Campaign Analytics Report",
+      status: "closed",
+      priority: "low",
+      createdDate: "2026-07-05",
+      response: "Resolved - Report sent via email",
+    },
+  ],
+};
+
+// Get user profile
+app.get("/api/user/profile/:email", (req, res) => {
+  const { email } = req.params;
+  const profile = userProfiles[email];
+  if (profile) {
+    res.json(profile);
+  } else {
+    res.status(404).json({ error: "User profile not found" });
+  }
+});
+
+// Update user profile
+app.put("/api/user/profile/:email", (req, res) => {
+  const { email } = req.params;
+  if (userProfiles[email]) {
+    userProfiles[email] = { ...userProfiles[email], ...req.body };
+    res.json(userProfiles[email]);
+  } else {
+    res.status(404).json({ error: "User profile not found" });
+  }
+});
+
+// Get user campaigns
+app.get("/api/user/campaigns/:email", (req, res) => {
+  const { email } = req.params;
+  const campaigns = userCampaigns[email] || [];
+  res.json(campaigns);
+});
+
+// Create new campaign
+app.post("/api/user/campaigns/:email", (req, res) => {
+  const { email } = req.params;
+  const newCampaign = {
+    id: Date.now().toString(),
+    status: "active",
+    startDate: new Date().toISOString().split("T")[0],
+    messagesSent: 0,
+    engagement: 0,
+    revenue: 0,
+    ...req.body,
+  };
+  if (!userCampaigns[email]) {
+    userCampaigns[email] = [];
+  }
+  userCampaigns[email].push(newCampaign);
+  res.status(201).json(newCampaign);
+});
+
+// Get user support tickets
+app.get("/api/user/tickets/:email", (req, res) => {
+  const { email } = req.params;
+  const tickets = userTickets[email] || [];
+  res.json(tickets);
+});
+
+// Create new support ticket
+app.post("/api/user/tickets/:email", (req, res) => {
+  const { email } = req.params;
+  const newTicket = {
+    id: `TK${Date.now().toString().slice(-6)}`,
+    status: "open",
+    priority: req.body.priority || "medium",
+    createdDate: new Date().toISOString().split("T")[0],
+    response: "Ticket received - will be reviewed by support team",
+    ...req.body,
+  };
+  if (!userTickets[email]) {
+    userTickets[email] = [];
+  }
+  userTickets[email].push(newTicket);
+  res.status(201).json(newTicket);
+});
+
+// Get user analytics
+app.get("/api/user/analytics/:email", (req, res) => {
+  const { email } = req.params;
+  const campaigns = userCampaigns[email] || [];
+  
+  const totalMessages = campaigns.reduce((sum, c) => sum + c.messagesSent, 0);
+  const totalRevenue = campaigns.reduce((sum, c) => sum + c.revenue, 0);
+  const avgEngagement = campaigns.length > 0 
+    ? (campaigns.reduce((sum, c) => sum + c.engagement, 0) / campaigns.length).toFixed(1)
+    : 0;
+  
+  const tickets = userTickets[email] || [];
+  const openTickets = tickets.filter(t => t.status === "open").length;
+
+  res.json({
+    totalCampaigns: campaigns.length,
+    totalMessages,
+    totalRevenue,
+    engagementRate: avgEngagement,
+    openTickets,
+    avgResponseTime: "2-3 hours",
+  });
+});
+
 // Setup Vite middleware for dynamic asset compilation & HMR-handling or static serving
 async function setupVite() {
   if (process.env.NODE_ENV !== "production") {
