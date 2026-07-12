@@ -1,0 +1,6 @@
+{
+  "name": "OmniPulse",
+  "description": "All-in-One WhatsApp Growth & Support Engine. Incorporates marketing automation, conversational AI chat, and dynamic ROI performance tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
