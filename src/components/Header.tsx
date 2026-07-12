@@ -1,4 +1,5 @@
 import { Tab } from "../types";
+import { Shield, Users } from "lucide-react";
 
 interface HeaderProps {
   activeTab: Tab;
@@ -74,8 +75,35 @@ export default function Header({ activeTab, setActiveTab, onOpenDemo }: HeaderPr
         </button>
       </nav>
 
-      {/* Action Button */}
-      <div>
+      {/* Action Buttons */}
+      <div className="flex items-center gap-3">
+        {/* Login Buttons */}
+        <button 
+          onClick={() => setActiveTab(Tab.AdminLogin)}
+          className={`hidden lg:inline-flex items-center gap-2 text-sm font-semibold px-3 py-2 rounded-lg transition-all ${
+            activeTab === Tab.AdminLogin
+              ? "bg-purple-100 text-purple-600"
+              : "text-gray-600 hover:bg-gray-100"
+          }`}
+          title="Admin Login"
+        >
+          <Shield className="w-4 h-4" />
+          Admin
+        </button>
+        <button 
+          onClick={() => setActiveTab(Tab.UserLogin)}
+          className={`hidden lg:inline-flex items-center gap-2 text-sm font-semibold px-3 py-2 rounded-lg transition-all ${
+            activeTab === Tab.UserLogin
+              ? "bg-green-100 text-green-600"
+              : "text-gray-600 hover:bg-gray-100"
+          }`}
+          title="User Login"
+        >
+          <Users className="w-4 h-4" />
+          User
+        </button>
+
+        {/* Demo Button */}
         <button 
           onClick={onOpenDemo}
           className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors active:scale-98"

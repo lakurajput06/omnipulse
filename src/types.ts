@@ -3,6 +3,10 @@ export enum Tab {
   ROI = "roi",
   AIBot = "aibot",
   Menu = "menu",
+  AdminLogin = "admin-login",
+  UserLogin = "user-login",
+  AdminDashboard = "admin-dashboard",
+  UserDashboard = "user-dashboard",
 }
 
 export interface ChatMessage {

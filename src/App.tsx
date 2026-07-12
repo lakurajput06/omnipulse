@@ -6,13 +6,19 @@ import HomeView from "./components/HomeView";
 import ROIView from "./components/ROIView";
 import AIBotView from "./components/AIBotView";
 import MenuView from "./components/MenuView";
-import { Home, TrendingUp, Bot, Settings, X, Shield, Users, Zap } from "lucide-react";
+import AdminLogin from "./components/AdminLogin";
+import UserLogin from "./components/UserLogin";
+import { Home, TrendingUp, Bot, Settings, X, Shield, Users, Zap, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Home);
   const [isTourOpen, setIsTourOpen] = useState(false);
   const [isDemoOpen, setIsDemoOpen] = useState(false);
+  
+  // Authentication states
+  const [adminAuth, setAdminAuth] = useState<{ email: string } | null>(null);
+  const [userAuth, setUserAuth] = useState<{ email: string } | null>(null);
 
   // Demo scheduler modal states
   const [demoName, setDemoName] = useState("");
@@ -42,6 +48,25 @@ export default function App() {
       setDemoEmail("");
       setActiveTab(Tab.Menu);
     }, 2000);
+  };
+
+  // Handle admin login
+  const handleAdminLogin = (email: string, password: string) => {
+    setAdminAuth({ email });
+    setActiveTab(Tab.AdminDashboard);
+  };
+
+  // Handle user login
+  const handleUserLogin = (email: string, password: string) => {
+    setUserAuth({ email });
+    setActiveTab(Tab.UserDashboard);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    setAdminAuth(null);
+    setUserAuth(null);
+    setActiveTab(Tab.Home);
   };
 
   return (
@@ -75,6 +100,96 @@ export default function App() {
             {activeTab === Tab.ROI && <ROIView />}
             {activeTab === Tab.AIBot && <AIBotView />}
             {activeTab === Tab.Menu && <MenuView />}
+            {activeTab === Tab.AdminLogin && (
+              <AdminLogin 
+                onLogin={handleAdminLogin}
+                onSignUpClick={() => setActiveTab(Tab.Home)}
+              />
+            )}
+            {activeTab === Tab.UserLogin && (
+              <UserLogin 
+                onLogin={handleUserLogin}
+                onSignUpClick={() => setActiveTab(Tab.Home)}
+              />
+            )}
+            {activeTab === Tab.AdminDashboard && adminAuth && (
+              <div className="w-full">
+                <div className="max-w-6xl mx-auto px-4 py-12">
+                  <div className="bg-blue-50 rounded-2xl p-8 md:p-12 text-center">
+                    <Shield className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+                    <p className="text-gray-600 mb-6 text-lg">Welcome, {adminAuth.email}</p>
+                    <div className="bg-white rounded-lg p-6 mb-8 text-left max-w-2xl mx-auto">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Dashboard Features</h2>
+                      <ul className="space-y-3 text-gray-700">
+                        <li className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                          <span>Manage users and permissions</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                          <span>View system analytics</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                          <span>Configure campaigns and integrations</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                          <span>Monitor AI engine performance</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all font-semibold"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {activeTab === Tab.UserDashboard && userAuth && (
+              <div className="w-full">
+                <div className="max-w-6xl mx-auto px-4 py-12">
+                  <div className="bg-green-50 rounded-2xl p-8 md:p-12 text-center">
+                    <Users className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">User Dashboard</h1>
+                    <p className="text-gray-600 mb-6 text-lg">Welcome, {userAuth.email}</p>
+                    <div className="bg-white rounded-lg p-6 mb-8 text-left max-w-2xl mx-auto">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Features</h2>
+                      <ul className="space-y-3 text-gray-700">
+                        <li className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-green-600 rounded-full" />
+                          <span>Send WhatsApp marketing campaigns</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-green-600 rounded-full" />
+                          <span>Create and manage support tickets</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-green-600 rounded-full" />
+                          <span>View ROI analytics and reports</span>
+                        </li>
+                        <li className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-green-600 rounded-full" />
+                          <span>Chat with AI Support Bot</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all font-semibold"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </main>
@@ -129,6 +244,28 @@ export default function App() {
         >
           <Settings className="w-5 h-5" />
           <span className="text-[10px]">Workspace</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab(Tab.AdminLogin)}
+          className={`flex flex-col items-center gap-1 font-medium transition-all cursor-pointer ${
+            activeTab === Tab.AdminLogin ? "text-purple-600 scale-105" : "text-gray-400 hover:text-gray-600"
+          }`}
+          id="mobile-nav-admin"
+        >
+          <Shield className="w-5 h-5" />
+          <span className="text-[10px]">Admin</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab(Tab.UserLogin)}
+          className={`flex flex-col items-center gap-1 font-medium transition-all cursor-pointer ${
+            activeTab === Tab.UserLogin ? "text-green-600 scale-105" : "text-gray-400 hover:text-gray-600"
+          }`}
+          id="mobile-nav-user"
+        >
+          <Users className="w-5 h-5" />
+          <span className="text-[10px]">User</span>
         </button>
       </nav>
 
